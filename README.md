@@ -1,15 +1,33 @@
-# Senate-Bus-Problem
+# Sinhala-English Language Identifier
 Concurrent programming with semaphores
 
-# Challenge
+# About Project
+The objective of the project is to identify the language of the word entered to the application based charactor sequence of the language words.
 
-This problem was originally based on the Senate bus at Wellesley College. Riders come to a bus stop and wait for a bus. When the bus arrives, all the waiting riders invoke boardBus, but anyone who arrives while the bus is boarding has to wait for the next bus. The capacity of the bus is 50 people; if there are more than 50 people waiting, some will have to wait for the next bus. When all the waiting riders have boarded, the bus can invoke depart. If the bus arrives when there are no riders, it should depart immediately. 
+# Methodology 
 
-# Notes
+1 Data Preparation
 
-- This problem is taken from the book “Little book of Semaphores”, page 211. It is ok to look at the solution. But if you have the same answer and you cannot explain how it works, you will not get any marks (randomly selected set of students will be invited for a one-on-one grading session).  
+First, we extract a Sinhala dataset and an English dataset from the Wikipedia articles using the Python Wikipedia library. We used the character sequence properties as the main feature of this model. We convert Sinhala words to Singlish words  (Unidecode) before train the model in order to make a common feature for both Sinhala and English language. 
 
-- The reason for forcing you to use Java is that implementing synchronization code in Java is relatively easier than several other languages 
+2 Data Preprocessing
 
-- Note that busses and riders will continue to arrive throughout the day. Assume inter-arrival time of busses and riders are exponentially distributed with a mean of 20 min and 30 sec, respectively.  
+First, we tokenize each word of the article from the white spaces. Then we convert each Sinhala word into English words (Unidecode). 
+(Example: අම්මා => amma, බල්ලා => ballaa)
 
+Then we created one-hot vectors for each of the characters for a particular word and then combined then and created a multi-hot vector with length 312 (26*max_word_length). That vector represents the character properties for a particular word. When creating vectors, we only considered words, which have a maximum size of 12. Otherwise, the vector length gets much longer.
+
+3 Model Training
+
+After we have done all the preprocessing required to train the model, we have divided our data set into training and test data sets(x_train,x_test) as 85% of the dataset is training data and 15% of the data is test data. In this language classifier for Sinhala & English languages, we used a supervised learning approach with Keras 5-layer neural network model. Every hidden layer in the neural network used ‘sigmoid’ function as the activation function. Also, we used MSE(Mean Squared Error) as the error calculating approach and 50 epochs for our model training. 
+After we trained our model we have saved model weights into a file called “weights.hdf5” for further usage(In our FYP). 
+In the model training process, we have used the approximately equal size of datasets for both the English and Sinhala languages for avoiding the model bias.
+
+4 Summary and Results
+
+After testing the model with a test data set, we observed the following accuracy and error from the neural network model.
+
+				Accuracy: 92.97% (for 50 epochs)
+				Mean Squared Error (MSE): 0.0652
+
+Here we only used 13 Wikipedia articles for both Sinhala and English languages. Those articles have similar content. If we use more articles and train the model with larger epochs we can increase the accuracy of this neural network model.
